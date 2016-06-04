@@ -88,10 +88,13 @@ class Solution
 
   def find_between(min, max) 
     #place solution here
+    @coll.find(secs: {:$lt=> max, :$gt=> min})
   end
 
   def find_by_letter(letter, offset, limit) 
     #place solution here
+    letter = letter.upcase
+    @coll.find(last_name: {:$regex=> "^#{letter}.+"}).sort(last_name: 1).skip(offset).limit(limit)
   end
 
   #
