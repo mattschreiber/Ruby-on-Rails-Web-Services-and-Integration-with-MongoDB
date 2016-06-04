@@ -25,14 +25,14 @@ class Solution
   def sample
     #return a single document from the `zips` collection from the database. 
     #This does not have to be random. It can be first, last, or any other document in the collection.
-    @@db[:zips].find.first
+    @@db[:zips].find(_id: "01002").to_a
   end
 end
 
-#byebug
-db=Solution.mongo_client
-p db
-zips=Solution.collection
-p zips
-s=Solution.new
-pp s.sample
+# byebug
+# db=Solution.mongo_client
+# p db
+# zips=Solution.collection
+# p zips
+# s=Solution.new
+# pp s.sample
