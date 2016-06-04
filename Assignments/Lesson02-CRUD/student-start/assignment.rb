@@ -1,7 +1,9 @@
-require 'mongo'
-require 'json'
+require 'bundler/setup'
+Bundler.require
+# require 'mongo'
+# require 'json'
 require 'pp'
-require 'byebug'
+# require 'byebug'
 Mongo::Logger.logger.level = ::Logger::INFO
 #Mongo::Logger.logger.level = ::Logger::DEBUG
 
