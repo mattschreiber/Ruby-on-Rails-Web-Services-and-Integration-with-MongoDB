@@ -30,8 +30,8 @@ class Racer
   	if id.is_a? String
   		id = BSON::ObjectId.from_string(id)
 		end
+		result = self.collection.find(:_id=>id).first
 
-  	result = self.collection.find(:_id=>id).first
   	if result.nil?
   		return nil
   	else
@@ -40,7 +40,13 @@ class Racer
   	end
 	end
 
+	def save
+		result=self.class.collection
+              .insert_one(_id:@id, number:@number, first_name:@first_name, last_name:@last_name, gender:@gender, group:@group, secs:@secs)
+    @id=result.inserted_id
+	end
 end
+
 
 
 
