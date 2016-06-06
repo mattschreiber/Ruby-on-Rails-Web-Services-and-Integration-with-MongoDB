@@ -23,13 +23,24 @@ class Racer
 	end
 
 	def self.all (prototype={}, sort={number:1}, skip=0, limit=nil)
+		limit.nil? ? self.collection.find(prototype).skip(skip).sort(sort) : self.collection.find(prototype).skip(skip).sort(sort).limit(limit)
+	end
 
-		if limit.nil?
-			self.collection.find(prototype).skip(skip).sort(sort)
-		else
-			self.collection.find(prototype).skip(skip).sort(sort).limit(limit)
+	def self.find id
+  	if id.is_a? String
+  		id = BSON::ObjectId.from_string(id)
 		end
 
+  	result = self.collection.find(:_id=>id).first
+  	if result.nil?
+  		return nil
+  	else
+  		@id = result[:_id].to_s
+  		return Racer.new(result)
+  	end
 	end
 
 end
+
+
+
