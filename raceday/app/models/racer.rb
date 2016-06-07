@@ -48,7 +48,6 @@ class Racer
 
 	def update(params)
 
-		id = BSON::ObjectId.from_string(@id)
 		@number=params[:number].to_i
 		@first_name=params[:first_name]
 		@last_name=params[:last_name]
@@ -58,7 +57,7 @@ class Racer
 
 		params.slice!(:number, :first_name, :last_name, :gender, :group, :secs) if !params.nil?
 
-		self.class.collection.find(_id: id).replace_one(params)
+		self.class.collection.find(_id: BSON::ObjectId.from_string(@id)).replace_one(params)
 
 	end
 
