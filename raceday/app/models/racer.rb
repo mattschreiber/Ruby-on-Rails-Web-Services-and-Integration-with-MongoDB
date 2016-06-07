@@ -23,14 +23,14 @@ class Racer
 	end
 
 	def self.all (prototype={}, sort={number:1}, skip=0, limit=nil)
-		limit.nil? ? self.collection.find(prototype).skip(skip).sort(sort) : self.collection.find(prototype).skip(skip).sort(sort).limit(limit)
+		limit.nil? ? collection.find(prototype).skip(skip).sort(sort) : collection.find(prototype).skip(skip).sort(sort).limit(limit)
 	end
 
 	def self.find id
   	if id.is_a? String
   		id = BSON::ObjectId.from_string(id)
 		end
-		result = self.collection.find(:_id=>id).first
+		result = collection.find(:_id=>id).first
 
   	if result.nil?
   		return nil
@@ -78,6 +78,30 @@ class Racer
 	def updated_at
 		nil
 	end
+
+	def self.paginate(params)
+    Rails.logger.debug("paginate(#{params})")
+	    
+	    page=(params[:page] ||= 1).to_i
+	    limit=(params[:per_page] ||= 30).to_i
+	    offset=(page-1)*limit
+	    sort=params[:sort] ||= {}
+
+	    #get the associated page of Racers -- eagerly convert doc to Racers
+	    racers=[]
+	    all({}, sort, offset, limit).each do |doc|
+	      racers << Racer.new(doc)
+	    end
+
+	    # # #get a count of all documents in the collection
+	    total=all({}, sort, 0, 1).count
+	    
+	    WillPaginate::Collection.create(page, limit, total) do |pager|
+      pager.replace(racers)
+    end      
+  end
+
+
 
 end
 
