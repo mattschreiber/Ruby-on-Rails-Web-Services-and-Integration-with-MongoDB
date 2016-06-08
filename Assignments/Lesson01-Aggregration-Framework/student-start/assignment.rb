@@ -57,14 +57,17 @@ class Solution
 
   def racer_names
     #place solution here
+    self.class.collection.find.aggregate([{:$project=>{first_name:1, last_name:1,_id:0}}])
   end
 
   def id_number_map 
     #place solution here
+    self.class.collection.find.aggregate([{:$project=>{_id:1, number:1}}])
   end
 
   def concat_names
     #place solution here
+    self.class.collection.find.aggregate([{:$project=>{_id:0, number:1, name:{:$concat=>['$first_name', ' ', '$last_name']}}}])
   end
 
   #
@@ -74,14 +77,18 @@ class Solution
 
   def group_times
     #place solution here
+    self.class.collection.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'},
+      runners:{'$sum' => 1}, fastest_time:{:$min=>'$secs'}}}])
   end
 
   def group_last_names
     #place solution here
+    self.class.collection.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'}, last_names: {:$push=>'$last_name'}}}])
   end
 
   def group_last_names_set
     #place solution here
+    self.class.collection.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'}, last_names:{:$addToSet=>'$last_name'}}}])
   end
 
   #
