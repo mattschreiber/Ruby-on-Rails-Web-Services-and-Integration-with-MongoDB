@@ -96,13 +96,20 @@ class Solution
   #
   def groups_faster_than criteria_time
     #place solution here
+    self.class.collection.find.aggregate([{:$match=>{secs: {:$lte=>criteria_time}}}, {:$group=>{:_id=> {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}}])
   end
 
   def age_groups_faster_than age_group, criteria_time
     #place solution here
+    # self.class.collection.find.aggregate([{:$match=>{group: {:$eq=>age_group}}}, 
+    #   {:$group=>{_id: {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}}])
+
+    self.class.collection.find.aggregate([{:$match=>{group: {:$eq=> age_group}}}, 
+      {:$group=>{_id: {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}},
+      {:$match=>{fastest_time: {:$lte=>criteria_time}}}])
+
   end
-
-
+  # Solution.collection.find.aggregate([{:$match=> {:$and=> [{group: {:$eq=> age_group} }, {secs: {:$lte=> criteria_time}}]}}, {:$group=>{_id: {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}}])
   #
   # Lecture 5: $unwind
   #
