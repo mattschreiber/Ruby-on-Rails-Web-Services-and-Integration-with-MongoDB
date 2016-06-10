@@ -121,6 +121,8 @@ class Solution
   
   def number_goal last_name
     #place solution here
+    self.class.collection.find.aggregate([{:$match=>{last_name:{:$eq=>last_name}}},{:$group=>{_id: '$last_name', last_name:{:$addToSet=>'$last_name'}, avg_time:{'$avg'=>'$secs'}, number:{:$push=>'$number'}}},{:$unwind=>'$numbers'},{:$unwind=>'$last_name'}, {:$project=>{last_name:1, avg_time:1, number:1, _id:0}}])
+    # Solution.collection.find.aggregate([{:$match=>{last_name:{:$eq=>last_name}}},{:$group=>{_id: {last_name:'$last_name'}, avg_time:{'$avg'=>'$secs'}, numbers:{:$push=>'$number'}}}, {:$unwind=>'$numbers'},{:$project=>{last_name:1, avg_time:1, numbers:1, _id:0}}])
   end
 
 end
