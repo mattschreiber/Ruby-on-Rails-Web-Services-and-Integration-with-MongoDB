@@ -57,17 +57,17 @@ class Solution
 
   def racer_names
     #place solution here
-    self.class.collection.find.aggregate([{:$project=>{first_name:1, last_name:1,_id:0}}])
+    @coll.find.aggregate([{:$project=>{first_name:1, last_name:1,_id:0}}])
   end
 
   def id_number_map 
     #place solution here
-    self.class.collection.find.aggregate([{:$project=>{_id:1, number:1}}])
+    @coll.find.aggregate([{:$project=>{_id:1, number:1}}])
   end
 
   def concat_names
     #place solution here
-    self.class.collection.find.aggregate([{:$project=>{_id:0, number:1, name:{:$concat=>['$first_name', ' ', '$last_name']}}}])
+    @coll.find.aggregate([{:$project=>{_id:0, number:1, name:{:$concat=>['$first_name', ' ', '$last_name']}}}])
   end
 
   #
@@ -77,18 +77,18 @@ class Solution
 
   def group_times
     #place solution here
-    self.class.collection.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'},
+    @coll.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'},
       runners:{'$sum' => 1}, fastest_time:{:$min=>'$secs'}}}])
   end
 
   def group_last_names
     #place solution here
-    self.class.collection.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'}, last_names: {:$push=>'$last_name'}}}])
+    @coll.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'}, last_names: {:$push=>'$last_name'}}}])
   end
 
   def group_last_names_set
     #place solution here
-    self.class.collection.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'}, last_names:{:$addToSet=>'$last_name'}}}])
+    @coll.find.aggregate([{:$group=>{_id: {gender:'$gender', age:'$group'}, last_names:{:$addToSet=>'$last_name'}}}])
   end
 
   #
@@ -96,7 +96,7 @@ class Solution
   #
   def groups_faster_than criteria_time
     #place solution here
-    self.class.collection.find.aggregate([{:$match=>{secs: {:$lte=>criteria_time}}}, {:$group=>{:_id=> {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}}])
+    @coll.find.aggregate([{:$match=>{secs: {:$lte=>criteria_time}}}, {:$group=>{:_id=> {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}}])
   end
 
   def age_groups_faster_than age_group, criteria_time
@@ -104,7 +104,7 @@ class Solution
     # self.class.collection.find.aggregate([{:$match=>{group: {:$eq=>age_group}}}, 
     #   {:$group=>{_id: {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}}])
 
-    self.class.collection.find.aggregate([{:$match=>{group: {:$eq=> age_group}}}, 
+    @coll.find.aggregate([{:$match=>{group: {:$eq=> age_group}}}, 
       {:$group=>{_id: {gender:'$gender', age:'$group'}, runners:{'$sum'=>1}, fastest_time:{'$min'=>'$secs'}}},
       {:$match=>{fastest_time: {:$lte=>criteria_time}}}])
 
@@ -115,17 +115,16 @@ class Solution
   #
   def avg_family_time last_name
     #place solution here
-    self.class.collection.find.aggregate([{:$match=>{last_name: {:$eq=>last_name}}},
+    @coll.find.aggregate([{:$match=>{last_name: {:$eq=>last_name}}},
       {:$group=>{_id: '$last_name', avg_time:{'$avg'=>'$secs'}, numbers:{:$push=>'$number'}}}])
   end
   
   def number_goal last_name
     #place solution here
-    self.class.collection.find.aggregate([
+    @coll.find.aggregate([
       {:$match=>{last_name:last_name}},{:$group=>{_id: '$last_name', avg_time:{'$avg'=>'$secs'}, number:{:$push=>'$number'}}},
       {:$unwind=>'$number'}, 
       {:$project=>{last_name:'$_id', avg_time:1, number:1, _id:0}}])
-    # Solution.collection.find.aggregate([{:$match=>{last_name:{:$eq=>last_name}}},{:$group=>{_id: {last_name:'$last_name'}, avg_time:{'$avg'=>'$secs'}, numbers:{:$push=>'$number'}}}, {:$unwind=>'$numbers'},{:$project=>{last_name:1, avg_time:1, numbers:1, _id:0}}])
   end
 
 end
