@@ -56,6 +56,13 @@ class Racer
     end
   end
 end
+# racers.find(:name=>{:$exists=>true}).each do |r|
+# matches=/(\w+) (\w+)/.match r[:name]
+# first_name=matches[1]
+# last_name=matches[2]
+# racers.update_one({:_id=>r[:_id]}, {:$set=>{:first_name=>first_name, :last_name=>last_name}, :$unset=>{:name=>""}})
+end
 
+# racers.find(:name=>{:$exists=>true}).each do |r| matches=/(\w+) (\w+)/.match r[:name] first_name=matches[1] last_name=matches[2] racers.update_one({:_id=>r[:_id]}, {:$set=>{:first_name=>first_name, :last_name=>last_name}, :$unset=>{:name=>""}}) end
 #Racer.reset
 #Racer.reset ./student-start/race2_results.json"
