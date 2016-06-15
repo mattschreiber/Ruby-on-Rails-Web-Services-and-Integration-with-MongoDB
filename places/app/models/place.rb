@@ -1,7 +1,8 @@
 class Place
   include Mongoid::Document
 
-
+  attr_accessor :id, :formatted_address, :location, :address_components
+  # @address_components = Array.new()
   
   def self.mongo_client
   	Mongoid::Clients.default
@@ -20,4 +21,15 @@ class Place
   def self.delete_many
   	self.collection.delete_many
 	end
+
+  def initialize (params)
+    @id = params[:_id].to_s
+    @formatted_address = params[:formatted_address]
+    @location = Point.new(params[:geometry][:location])
+    @address_components = Array.new
+    params[:address_components].each {|e| @address_components.push(AddressComponent.new(e))}
+
+    # params[:address_components].each {|r| @address_components.push(r)}
+  end
+
 end
