@@ -72,6 +72,11 @@ class Place
       {:$group=>{_id:{long_name:'$address_components.long_name'}}}]).to_a.map {|h| h[:_id][:long_name]}
   end
 
+  def self.find_ids_by_country_code(country_code)
+    collection.find.aggregate([{:$match=>{'address_components.short_name':country_code}},
+      {:$project=>{_id:1}}]).to_a.map {|code| code[:_id].to_s}
+  end
+
   def initialize (params)
     @id = params[:_id].to_s
     @formatted_address = params[:formatted_address]
