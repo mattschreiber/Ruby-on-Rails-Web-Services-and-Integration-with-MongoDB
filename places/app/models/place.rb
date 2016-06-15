@@ -26,6 +26,17 @@ class Place
     collection.find({'address_components.short_name': short_name})
   end
 
+  def self.to_places (mongo_view)
+    places = Array.new
+    mongo_view.each {|r| places.push(Place.new(r))} 
+    return places
+  end
+
+  def self.find(id)
+    place = collection.find({_id: BSON::ObjectId.from_string(id)}).first
+    Place.new(place)
+  end
+
   def initialize (params)
     @id = params[:_id].to_s
     @formatted_address = params[:formatted_address]
