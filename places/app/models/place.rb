@@ -77,6 +77,14 @@ class Place
       {:$project=>{_id:1}}]).to_a.map {|code| code[:_id].to_s}
   end
 
+  def self.create_indexes
+    collection.indexes.create_one({'geometry.geolocation' => Mongo::Index::GEO2DSPHERE})
+  end
+
+  def self.remove_indexes
+    collection.indexes.drop_one("geometry.geolocation_2dsphere")
+  end
+
   def initialize (params)
     @id = params[:_id].to_s
     @formatted_address = params[:formatted_address]
