@@ -22,6 +22,10 @@ class Place
   	self.collection.delete_many
 	end
 
+  def self.find_by_short_name (short_name)
+    collection.find({'address_components.short_name': short_name})
+  end
+
   def initialize (params)
     @id = params[:_id].to_s
     @formatted_address = params[:formatted_address]
