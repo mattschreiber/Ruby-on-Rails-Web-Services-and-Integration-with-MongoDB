@@ -34,7 +34,17 @@ class Place
 
   def self.find(id)
     place = collection.find({_id: BSON::ObjectId.from_string(id)}).first
-    Place.new(place)
+    place.nil? ? nil : Place.new(place)
+  end
+
+  def self.all(offset=0, limit=nil)
+    places = Array.new
+    if limit
+      collection.find.skip(offset).limit(limit).each {|place| places.push(Place.new(place))}
+    else
+      collection.find.skip(offset).each {|place| places.push(Place.new(place))}
+    end
+    return places
   end
 
   def initialize (params)
