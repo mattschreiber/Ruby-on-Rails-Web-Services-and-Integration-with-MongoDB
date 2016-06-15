@@ -85,6 +85,21 @@ class Place
     collection.indexes.drop_one("geometry.geolocation_2dsphere")
   end
 
+  def self.near(point, max_meters=nil)
+    #execute a 2dsphere location find
+    near_places =[]
+    if max_meters #check if max_meters is set
+      collection.find(
+        'geometry.geolocation'=>{:$near=>{
+        :$geometry=>point.to_hash, 
+        :$maxDistance=>max_meters}})
+    else
+      collection.find(
+        'geometry.geolocation'=>{:$near=>{
+        :$geometry=>point.to_hash,}})
+    end
+  end
+
   def initialize (params)
     @id = params[:_id].to_s
     @formatted_address = params[:formatted_address]
