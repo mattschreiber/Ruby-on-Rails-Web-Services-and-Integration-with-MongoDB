@@ -48,22 +48,28 @@ class Place
   end
 
   def self.get_address_components(sort={}, offset=0, limit=nil)
-
     if sort.empty? #apply no filters
-      Place.collection.find.aggregate([{:$unwind=>'$address_components'},
+      collection.find.aggregate([{:$unwind=>'$address_components'},
       {:$project=>{_id:1, formatted_address:1, 'geometry.geolocation':1, address_components:1}}])
     elsif limit #limit results
-      Place.collection.find.aggregate([{:$unwind=>'$address_components'},
+      collection.find.aggregate([{:$unwind=>'$address_components'},
       {:$project=>{_id:1, formatted_address:1, 'geometry.geolocation':1, address_components:1}}, 
       {:$sort=>sort}, 
       {:$skip=>offset}, {:$limit=>limit}])
     else #no limit
-      Place.collection.find.aggregate([{:$unwind=>'$address_components'},
+      collection.find.aggregate([{:$unwind=>'$address_components'},
       {:$project=>{_id:1, formatted_address:1, 'geometry.geolocation':1, address_components:1}}, 
       {:$sort=>sort}, 
       {:$skip=>offset}])
     end
-      
+  end
+
+  def self.get_country_names
+    collection.find.aggregate([{:$project=>{'address_components.long_name':1, 'address_components.types':1}},
+      {:$unwind=>'$address_components'},
+      {:$unwind=>'$address_components.types'},
+      {:$match=>{'address_components.types':'country'}}, 
+      {:$group=>{_id:{long_name:'$address_components.long_name'}}}]).to_a.map {|h| h[:_id][:long_name]}
   end
 
   def initialize (params)
