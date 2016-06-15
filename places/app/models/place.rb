@@ -57,4 +57,8 @@ class Place
     # params[:address_components].each {|r| @address_components.push(r)}
   end
 
+  def destroy
+    self.class.collection.find({_id: BSON::ObjectId.from_string(id)}).delete_one
+  end
+
 end
