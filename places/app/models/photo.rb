@@ -25,9 +25,9 @@ class Photo
   end
 
   def save
-    # if persisted?
-    #   #do nothing
-    # else
+    if persisted?
+      #do nothing
+    else
       gps=EXIFR::JPEG.new(@contents).gps
       @location = Point.new(lng: gps.longitude, lat: gps.latitude)
       @contentType = "image/jpeg"
@@ -53,6 +53,6 @@ class Photo
         Rails.logger.debug {"saved gridfs file #{id}"}
         @id
       end
-    # end  
+    end  
   end
 end
