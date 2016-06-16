@@ -9,6 +9,16 @@ class Photo
     Mongoid::Clients.default
   end
 
+  def self.all (offset=0, limit=nil)
+    files=[]
+    if limit
+      mongo_client.database.fs.find.skip(offset).limit(limit).each { |file| files.push(Photo.new(file)) }
+   else
+      mongo_client.database.fs.find.skip(offset).each {|file| files.push(Photo.new(file)) }
+   end
+    return files
+  end 
+
   def initialize (params={})
     Rails.logger.debug {"instantiating GridFsFile #{params}"}
     if params[:_id]  #hash came from GridFS
