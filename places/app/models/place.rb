@@ -103,15 +103,20 @@ class Place
   def initialize (params)
     @id = params[:_id].to_s
     @formatted_address = params[:formatted_address]
-    @location = Point.new(params[:geometry][:location])
+    @location = Point.new(params[:geometry][:geolocation])
     @address_components = Array.new
-    params[:address_components].each {|e| @address_components.push(AddressComponent.new(e))}
+    params[:address_components].nil? ? nil : params[:address_components].each {|e| @address_components.push(AddressComponent.new(e))}
 
     # params[:address_components].each {|r| @address_components.push(r)}
   end
 
   def destroy
     self.class.collection.find({_id: BSON::ObjectId.from_string(id)}).delete_one
+  end
+
+  def near (max_meters=nil)
+    #call class method near
+    Place.to_places(Place.near(@location.to_hash, max_meters))
   end
 
 end
