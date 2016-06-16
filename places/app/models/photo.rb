@@ -19,6 +19,12 @@ class Photo
     return files
   end 
 
+  def self.find(id)
+    photo = mongo_client.database.fs.find({_id: BSON::ObjectId.from_string(id)}).first
+    photo.nil? ? nil : Photo.new(photo)
+
+  end
+
   def initialize (params={})
     Rails.logger.debug {"instantiating GridFsFile #{params}"}
     if params[:_id]  #hash came from GridFS
