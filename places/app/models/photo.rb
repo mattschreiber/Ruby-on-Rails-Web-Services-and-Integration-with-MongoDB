@@ -74,6 +74,7 @@ class Photo
         id=self.class.mongo_client.database.fs.insert_one(grid_file)
         @id=id.to_s
         Rails.logger.debug {"saved gridfs file #{id}"}
+        @contents.rewind
         @id
       end
     end  
@@ -89,5 +90,10 @@ class Photo
       end
       return buffer
     end 
+  end # end contents
+
+  def destroy
+    Rails.logger.debug {"destroying gridfs file #{@id}"}
+    self.class.mongo_client.database.fs.find(id_criteria).delete_one
   end
 end
