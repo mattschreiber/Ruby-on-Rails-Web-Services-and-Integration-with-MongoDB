@@ -20,9 +20,16 @@ class Photo
   end 
 
   def self.find(id)
-    photo = mongo_client.database.fs.find({_id: BSON::ObjectId.from_string(id)}).first
+    photo = mongo_client.database.fs.find(id_criteria(id)).first
     photo.nil? ? nil : Photo.new(photo)
 
+  end
+
+  def self.id_criteria id
+    {_id:BSON::ObjectId.from_string(id)}
+  end
+  def id_criteria
+    self.class.id_criteria @id
   end
 
   def initialize (params={})
@@ -70,5 +77,17 @@ class Photo
         @id
       end
     end  
+  end # end save
+
+  def contents
+    Rails.logger.debug {"getting gridfs content #{@id}"}
+    f=self.class.mongo_client.database.fs.find_one(id_criteria)
+    if f 
+      buffer = ""
+      f.chunks.reduce([]) do |x,chunk| 
+          buffer << chunk.data.data 
+      end
+      return buffer
+    end 
   end
 end
