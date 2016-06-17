@@ -112,6 +112,7 @@ class Photo
   end
 
   def place
+    #convert @place to string because that is what Place.find expects
     @place.nil? ? nil : Place.find(@place.to_s)
   end
 
@@ -124,6 +125,13 @@ class Photo
     else
       @place = params
     end
+  end
+
+  def self.find_photos_for_place(id)
+    if id.is_a? String
+      id = BSON::ObjectId.from_string(id)
+    end
+    mongo_client.database.fs.find('metadata.place._id': id)
   end
 
 
