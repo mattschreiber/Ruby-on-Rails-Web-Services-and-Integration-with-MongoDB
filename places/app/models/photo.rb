@@ -1,3 +1,5 @@
+Mongo::Logger.logger.level = ::Logger::INFO
+
 class Photo
   include ActiveModel::Model
   
@@ -96,4 +98,11 @@ class Photo
     Rails.logger.debug {"destroying gridfs file #{@id}"}
     self.class.mongo_client.database.fs.find(id_criteria).delete_one
   end
+
+  def find_nearest_place_id (max_meters)
+    place = Place.near(@location, max_meters).limit(1).projection(_id:1).first
+    place[:_id]
+  end
+
+
 end
