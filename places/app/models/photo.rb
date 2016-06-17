@@ -51,7 +51,21 @@ class Photo
 
   def save
     if persisted?
-      #do nothing
+
+      description = {}
+      description[:filename]=@filename          if !@filename.nil?
+      description[:content_type]=@contentType   if !@contentType.nil?
+
+      description[:metadata] = {}
+      description[:metadata][:location]={}
+
+      description[:metadata][:location][:coordinates] = {}
+      description[:metadata][:location][:coordinates] = Array.new
+      description[:metadata][:location][:coordinates].push(@location.longitude)
+      description[:metadata][:location][:coordinates].push(@location.latitude) 
+
+      self.class.mongo_client.database.fs.find(id_criteria).update_one(description)
+    
     else
       gps=EXIFR::JPEG.new(@contents).gps
       @location = Point.new(lng: gps.longitude, lat: gps.latitude)
