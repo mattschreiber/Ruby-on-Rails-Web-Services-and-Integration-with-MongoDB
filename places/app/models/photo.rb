@@ -3,7 +3,7 @@ Mongo::Logger.logger.level = ::Logger::INFO
 class Photo
   include ActiveModel::Model
   
-  attr_accessor :id, :location, :contentType, :coordinates
+  attr_accessor :id, :location, :contentType, :coordinates, :place
   attr_writer :contents
 
     #class method to connect to mongo
@@ -39,9 +39,11 @@ class Photo
     if params[:_id]  #hash came from GridFS
       @id=params[:_id].to_s
       @location=params[:metadata].nil? ? nil : Point.new(params[:metadata][:location])
+      @place = params[:metadata].nil? ? nil : params[:metadata][:place]
     else              #assume hash came from Rails
       @id=params[:id]
       @location=params[:location]
+      @place=params[:place]
     end
   end
 
@@ -50,40 +52,31 @@ class Photo
   end
 
   def save
-    if persisted?
 
-      description = {}
-      description[:filename]=@filename          if !@filename.nil?
-      description[:content_type]=@contentType   if !@contentType.nil?
-
-      description[:metadata] = {}
-      description[:metadata][:location]={}
-
-      description[:metadata][:location][:coordinates] = {}
-      description[:metadata][:location][:coordinates] = Array.new
-      description[:metadata][:location][:coordinates].push(@location.longitude)
-      description[:metadata][:location][:coordinates].push(@location.latitude) 
-
-      self.class.mongo_client.database.fs.find(id_criteria).update_one(description)
-    
-    else
+    if @contents
       gps=EXIFR::JPEG.new(@contents).gps
       @location = Point.new(lng: gps.longitude, lat: gps.latitude)
       @contentType = "image/jpeg"
       @contents.rewind #must rewind before call to Gridfs so proper number of bytes stored
+    end
 
       description = {}
       description[:filename]=@filename          if !@filename.nil?
       description[:content_type]=@contentType   if !@contentType.nil?
 
       description[:metadata] = {}
+      description[:metadata][:place] = @place
+
       description[:metadata][:location]={}
 
       description[:metadata][:location][:coordinates] = {}
       description[:metadata][:location][:coordinates] = Array.new
       description[:metadata][:location][:coordinates].push(@location.longitude)
       description[:metadata][:location][:coordinates].push(@location.latitude) 
-        
+
+    if persisted?  
+      self.class.mongo_client.database.fs.find(id_criteria).update_one(description)
+    else        
       if @contents
         Rails.logger.debug {"contents= #{@contents}"}
         grid_file = Mongo::Grid::File.new(@contents.read, description )
@@ -115,7 +108,22 @@ class Photo
 
   def find_nearest_place_id (max_meters)
     place = Place.near(@location, max_meters).limit(1).projection(_id:1).first
-    place[:_id]
+    place.nil? ? nil : place[:_id]
+  end
+
+  def place
+    @place.nil? ? nil : Place.find(@place.to_s)
+  end
+
+  def place=(params)
+    #can be BSON::ObjectID, String or Place object
+    if params.is_a? Place
+      @place = self.class.id_criteria(params.id)
+    elsif params.is_a? String
+      @place = self.class.id_criteria(params)
+    else
+      @place = params
+    end
   end
 
 
