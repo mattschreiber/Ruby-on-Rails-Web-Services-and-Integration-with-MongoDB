@@ -1,5 +1,5 @@
 class Place
-  include Mongoid::Document
+  include ActiveModel::Model
 
   attr_accessor :id, :formatted_address, :location, :address_components
   # @address_components = Array.new()
@@ -108,6 +108,10 @@ class Place
     params[:address_components].nil? ? nil : params[:address_components].each {|e| @address_components.push(AddressComponent.new(e))}
 
     # params[:address_components].each {|r| @address_components.push(r)}
+  end
+
+  def persisted?
+    !@id.nil?
   end
 
   def destroy
