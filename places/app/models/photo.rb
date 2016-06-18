@@ -24,7 +24,13 @@ class Photo
   def self.find(id)
     photo = mongo_client.database.fs.find(id_criteria(id)).first
     photo.nil? ? nil : Photo.new(photo)
+  end
 
+  def self.find_photos_for_place(id)
+    if id.is_a? String
+      id = BSON::ObjectId.from_string(id)
+    end
+    mongo_client.database.fs.find('metadata.place': id)
   end
 
   def self.id_criteria id
@@ -113,26 +119,21 @@ class Photo
 
   def place
     #convert @place to string because that is what Place.find expects
+
     @place.nil? ? nil : Place.find(@place.to_s)
   end
 
   def place=(params)
     #can be BSON::ObjectID, String or Place object
     if params.is_a? Place
-      @place = self.class.id_criteria(params.id)
+      @place = BSON::ObjectId.from_string(params.id)
     elsif params.is_a? String
-      @place = self.class.id_criteria(params)
+      @place = BSON::ObjectId.from_string(params)
     else
       @place = params
     end
   end
-
-  def self.find_photos_for_place(id)
-    if id.is_a? String
-      id = BSON::ObjectId.from_string(id)
-    end
-    mongo_client.database.fs.find('metadata.place._id': id)
-  end
-
-
 end
+
+
+# 5.times {photo=Photo.new; photo.contents=File.open('./db/image1.jpg','rb');photo.save}

@@ -119,4 +119,14 @@ class Place
     Place.to_places(Place.near(@location.to_hash, max_meters))
   end
 
+  def photos (offset=0, limit=nil)
+    photos = []
+    if limit
+      Photo.find_photos_for_place(id).skip(offset).limit(limit).each{|r| photos << Photo.find(r[:_id])}
+    else
+      Photo.find_photos_for_place(id).skip(offset).each {|r| photos << Photo.find(r[:_id])}
+    end
+    photos
+  end
+
 end
