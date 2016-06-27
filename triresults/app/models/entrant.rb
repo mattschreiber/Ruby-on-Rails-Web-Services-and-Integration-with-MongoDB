@@ -10,11 +10,7 @@ class Entrant
   field :group, type: Placing
 
   embeds_many :results, class_name: 'LegResult', order: [:"event.o".asc], after_add: :update_total
-
-  # after_add do |doc|
-  # 		self.secs = 0
-  # 		update_total(doc)
-  # end
+  embeds_one :race, class_name: 'RaceRef'
 
   def update_total(result)
   	self.secs = 0
