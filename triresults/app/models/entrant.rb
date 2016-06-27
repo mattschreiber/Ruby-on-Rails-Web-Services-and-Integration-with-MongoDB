@@ -19,4 +19,8 @@ class Entrant
 		end 
 	end
 
+	def the_race
+		race.race
+	end
+
 end
