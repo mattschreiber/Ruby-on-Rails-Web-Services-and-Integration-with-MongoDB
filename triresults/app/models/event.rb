@@ -10,14 +10,14 @@ class Event
 
   def meters
   	case
-  	when self.u == "miles"
-  		self.d * 1609.344
-  	when self.u == "kilometers"
-  		self.d * 1000
-  	when self.u == "yards"
-  		self.d * 0.9144
-  	when self.u == "meters"
-  		self.d
+  	when self[:u] == "miles"
+  		self[:d] * 1609.344
+  	when self[:u] == "kilometers"
+  		self[:d] * 1000
+  	when self[:u] == "yards"
+  		self[:d] * 0.9144
+  	when self[:u] == "meters"
+  		self[:d]
   	else
   		nil
   	end
@@ -25,14 +25,14 @@ class Event
 
   def miles
   	case
-  	when self.u == "meters"
-  		self.d  * 0.000621371
-  	when self.u == "kilometers"
-  		self.d * 0.621371
-  	when self.u == "yards"
-  		self.d * 0.000568182
-  	when self.u == "miles"
-  		self.d
+  	when self[:u] == "meters"
+  		self[:d]  * 0.000621371
+  	when self[:u] == "kilometers"
+  		self[:d] * 0.621371
+  	when self[:u] == "yards"
+  		self[:d]* 0.000568182
+  	when self[:u] == "miles"
+  		self[:d]
   	else
   		nil
   	end
