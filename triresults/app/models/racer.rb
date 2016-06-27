@@ -14,5 +14,4 @@ class Racer
   before_create do |racer|
   	racer.info.id = racer.id
   end
-
 end
