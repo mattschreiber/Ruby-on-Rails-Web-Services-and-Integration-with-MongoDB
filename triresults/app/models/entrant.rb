@@ -22,6 +22,9 @@ class Entrant
   embeds_one :race, class_name: 'RaceRef', autobuild: true
   embeds_one :racer, as: :parent, class_name: 'RacerInfo', autobuild: true
 
+  scope :upcoming, ->{ where('race.date'=> {:$gte=>Date.today}) }
+  scope :past, ->{ where('race.date'=>  {:$lt => Date.today}) }
+
   RESULTS = {"swim"=>SwimResult,
 		"t1"=>LegResult,
 		"bike"=>BikeResult,
