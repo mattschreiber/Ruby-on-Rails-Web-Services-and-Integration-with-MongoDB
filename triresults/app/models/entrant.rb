@@ -71,12 +71,8 @@ class Entrant
 	end
 
   def update_total(result)
-		self.secs = 0
-		#list of attributes used to calculate total time
-		RESULTS.keys.each do |name|
-			self.secs = send("#{name}_secs") + self.secs unless send("#{name}_secs").nil?
-		end
-	end
+    self.secs = self.results.reduce(0) { |sum,r| sum += r.secs ? r.secs : 0 }
+  end
 
 	def the_race
 		race.race
