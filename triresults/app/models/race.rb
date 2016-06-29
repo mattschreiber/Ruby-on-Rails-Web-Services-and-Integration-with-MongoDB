@@ -76,12 +76,10 @@ class Race
 		entrant.racer = racer.info.attributes
 		entrant.group = get_group(racer)
 		self.events.each {|event| entrant.send("#{event.name}=", event)}
-
 		if entrant.validate
       entrant.bib = next_bib
       entrant.save
     end
-
 		entrant
 	end
 
