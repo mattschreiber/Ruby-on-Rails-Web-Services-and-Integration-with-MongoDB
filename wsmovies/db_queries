@@ -1,0 +1,9 @@
+# create movie
+response = MoviesWS.post("/movies", :body=>{:movie=>{:id=>"12347", :title=>"rocky27"}}.to_json,
+:headers=>{"Content-Type"=>"application/json", "Accept"=>"application/vnd.myorgmovies.v2+json"})
+
+#create role for movie
+response=MoviesWS.post("/movies/12347/roles",
+:body=>{:movie_role=>{:id=>"1", :character=>"challenger"}}.to_json,
+:headers=>{"Content-Type"=>"application/json", "Accept"=>"application/json",
+"If-UnModified-Since"=>last_modified})
