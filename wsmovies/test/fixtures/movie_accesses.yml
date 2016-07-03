@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  created_at: MyString
+  accessed_by: MyString
+  action: MyString
+
+two:
+  created_at: MyString
+  accessed_by: MyString
+  action: MyString

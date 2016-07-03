@@ -13,6 +13,7 @@ class MoviesController < ApplicationController
     # headers["ETag"] = Digest::MD5.hexdigest(@movie.cache_key)
     # headers["Last-Modified"]=@movie.updated_at.httpdate
     fresh_when(@movie)
+    @movie.movie_accesses.create(:action=>"show")
   end
 
   # GET /movies/new
@@ -31,6 +32,7 @@ class MoviesController < ApplicationController
 
     respond_to do |format|
       if @movie.save
+        @movie.movie_accesses.create(:action=>"create")
         fresh_when(@movie)
         format.html { redirect_to @movie, notice: 'Movie was successfully created.' }
         format.json { render :show, status: :created, location: @movie }
@@ -48,6 +50,7 @@ class MoviesController < ApplicationController
   def update
     respond_to do |format|
       if @movie.update(movie_params)
+        @movie.movie_accesses.create(:action=>"create")
         fresh_when(@movie)
         format.html { redirect_to @movie, notice: 'Movie was successfully updated.' }
         format.json { render :show, status: :ok, location: @movie }
@@ -63,6 +66,7 @@ class MoviesController < ApplicationController
   # DELETE /movies/1
   # DELETE /movies/1.json
   def destroy
+    @movie.movie_accesses.create(:action=>"destroy")
     @movie.destroy
     respond_to do |format|
       format.html { redirect_to movies_url, notice: 'Movie was successfully destroyed.' }

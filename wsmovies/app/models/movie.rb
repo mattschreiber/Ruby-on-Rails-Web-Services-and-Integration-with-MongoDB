@@ -1,9 +1,11 @@
 class Movie
   include Mongoid::Document
-  include Mongoid::Timestamps
+  include Mongoid::Timestamps::Updated
+  field :id, type: String
   field :title, type: String
 
   embeds_many :roles, class_name: "MovieRole"
+  has_many :movie_accesses 
 end
 
 
