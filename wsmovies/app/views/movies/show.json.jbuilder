@@ -1,4 +1,4 @@
-json.extract! @movie, :id, :title, :created_at, :updated_at
+json.extract! @movie, :id, :title, :updated_at
 
 json.roles @movie.roles do |role|
   json.id role.id
