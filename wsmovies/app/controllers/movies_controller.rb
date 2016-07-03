@@ -10,9 +10,9 @@ class MoviesController < ApplicationController
   # GET /movies/1
   # GET /movies/1.json
   def show
-    fresh_when(@movie)
     # headers["ETag"] = Digest::MD5.hexdigest(@movie.cache_key)
     # headers["Last-Modified"]=@movie.updated_at.httpdate
+    fresh_when(@movie)
   end
 
   # GET /movies/new
