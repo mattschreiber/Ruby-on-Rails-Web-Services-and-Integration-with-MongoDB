@@ -1317,16 +1317,16 @@ clarity of the two roles about to participate in the following session.
 1. Sign-up for a new account with the movies server as `wiley@acme.com` 
 and log into that account.
 
-2. Navigate to the `oauth/applications` page and register a new application.
+2. Navigate to the `oauth/applications` (http://localhost:3000/oauth/applications/new) page and register a new application.
 
-    * Name: Acme Client
+    * Name: Movie Client
     * Redirect URL: `http://acme.com/auth/movies/callback`
     * Scopes: (blank)
 
     Result
 
-    * Application Id: `44381a6e079b98720b356cd354ed8cdf232056350ad451f51a0559b1d8cf016c`
-    * Secret: `56e6815bc906de1a99a05b1c16c16dc13eb4b6a5702f98c965749eaf51208c29`
+    * Application Id: `3ef5dffa52bd43578aaef2c1470f952ea56730488932d6823c243dc9dcf1047d`
+    * Secret: `0f1880ae90aa4e61083dc4c37dab55733e4fe7f38169209e85e817f595d07f3b`
     * Callback URLs: `http://localhost:3001/auth/movies/callback`
 
 2. Using the `oauth2` gem, take the provided information and generate a authorization

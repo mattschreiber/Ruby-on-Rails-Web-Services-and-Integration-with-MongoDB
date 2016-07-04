@@ -18,6 +18,15 @@ module Api
     respond_with @movie.destroy
   end
 
+  def current_user
+    unless @current_user
+      if doorkeeper_token && doorkeeper_token.resource_owner_id
+        @current_user=User.where(:id=>doorkeeper_token.resource_owner_id).first
+      end    
+    end
+    @current_user
+  end
+
   private
     def set_movie
       @movie = Movie.find(params[:id])
@@ -28,7 +37,8 @@ module Api
       end
     end
     def movie_params
-      params.require(:movie).permit(:id, :title)
+      email=current_user.email  if current_user
+      params.require(:movie).permit(:id, :title).merge({:last_modifier=>email})
     end
   end
 end
